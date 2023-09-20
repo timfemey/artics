@@ -1,6 +1,10 @@
 package main
 
 import (
+	"artics-server/routes/comment"
+	postarticle "artics-server/routes/postArticle"
+	readarticle "artics-server/routes/readArticle"
+	"artics-server/routes/viewComments"
 	"log"
 
 	"github.com/gofiber/fiber/v2"
@@ -11,13 +15,13 @@ func main() {
 		Prefork: true,
 	})
 
-	app.Post("/newarticle")
+	app.Post("/newarticle", postarticle.NewArticle)
 
-	app.Post("/comment")
+	app.Post("/comment", comment.Comment)
 
-	app.Get("/article")
+	app.Get("/article", readarticle.ReadArticle)
 
-	app.Get("/viewcomms")
+	app.Get("/viewcomms", viewComments.ViewComments)
 
 	log.Fatal(app.Listen(":5000"))
 }
