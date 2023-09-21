@@ -6,6 +6,7 @@ import (
 
 	"cloud.google.com/go/firestore"
 	firebase "firebase.google.com/go/v4"
+	"firebase.google.com/go/v4/auth"
 	"firebase.google.com/go/v4/storage"
 )
 
@@ -25,6 +26,15 @@ func Firestore() *firestore.Client {
 	}
 	return firestore
 
+}
+
+func Auth() *auth.Client {
+	firebaseApp := runInit()
+	auth, err := firebaseApp.Auth(context.Background())
+	if err != nil {
+		log.Fatalf("error initializing auth app: %v\n", err)
+	}
+	return auth
 }
 
 func Storage() *storage.Client {
