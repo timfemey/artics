@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/google/uuid"
 )
 
 var firestore = config.Firestore()
@@ -13,7 +14,7 @@ var firestore = config.Firestore()
 var auth = config.Auth()
 
 func NewArticle(fiber *fiber.Ctx) error {
-
+	uuid := uuid.New()
 	uid := fiber.FormValue("uid")
 	article_name := fiber.FormValue("article-name")
 	article := fiber.FormValue("article")
@@ -41,10 +42,11 @@ func NewArticle(fiber *fiber.Ctx) error {
 		})
 	}
 
-	firestore.Collection("article").Add(ctx, map[string]any{
+	firestore.Collection("article").Doc(uuid.String()).Set(ctx, map[string]any{
 		"username":     user.DisplayName,
 		"article_name": article_name,
 		"article":      article,
+		"id":           uuid.String(),
 	})
 
 	return nil
