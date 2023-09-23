@@ -33,9 +33,18 @@ func Comment(fiber *fiber.Ctx) error {
 		})
 	}
 
-	firestore.Collection("article").Doc(docID).Collection("comments").Add(ctx, map[string]any{
+	_, _, err2 := firestore.Collection("article").Doc(docID).Collection("comments").Add(ctx, map[string]any{
 		"uid":     uid,
 		"comment": comment,
 	})
-	return nil
+	if err2 != nil {
+		return fiber.Status(http.StatusFailedDependency).JSON(map[string]any{
+			"status":  false,
+			"message": "Failed to Post Comment",
+		})
+	}
+	return fiber.Status(http.StatusOK).JSON(map[string]any{
+		"status":  true,
+		"message": "Successfully Uploaded Comment",
+	})
 }

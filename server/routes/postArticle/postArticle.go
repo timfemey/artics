@@ -42,12 +42,22 @@ func NewArticle(fiber *fiber.Ctx) error {
 		})
 	}
 
-	firestore.Collection("article").Doc(uuid.String()).Set(ctx, map[string]any{
-		"username":     user.DisplayName,
+	_, err2 := firestore.Collection("article").Doc(uuid.String()).Set(ctx, map[string]any{
+		"uid":          user.UID,
 		"article_name": article_name,
 		"article":      article,
 		"id":           uuid.String(),
 	})
 
-	return nil
+	if err2 != nil {
+		return fiber.Status(http.StatusFailedDependency).JSON(map[string]any{
+			"status":  false,
+			"message": "Failed to Upload Article",
+		})
+	}
+
+	return fiber.Status(http.StatusOK).JSON(map[string]any{
+		"status":  true,
+		"message": "Article Uploaded Successfully",
+	})
 }
