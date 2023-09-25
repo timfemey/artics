@@ -5,6 +5,7 @@ import (
 	"context"
 	"net/http"
 
+	firestorepkg "cloud.google.com/go/firestore"
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
 )
@@ -47,6 +48,7 @@ func NewArticle(fiber *fiber.Ctx) error {
 		"article_name": article_name,
 		"article":      article,
 		"id":           uuid.String(),
+		"timestamp":    firestorepkg.ServerTimestamp,
 	})
 
 	if err2 != nil {

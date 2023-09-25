@@ -5,6 +5,7 @@ import (
 	"context"
 	"net/http"
 
+	firestorepkg "cloud.google.com/go/firestore"
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -34,8 +35,9 @@ func Comment(fiber *fiber.Ctx) error {
 	}
 
 	_, _, err2 := firestore.Collection("article").Doc(docID).Collection("comments").Add(ctx, map[string]any{
-		"uid":     uid,
-		"comment": comment,
+		"uid":       uid,
+		"comment":   comment,
+		"timestamp": firestorepkg.ServerTimestamp,
 	})
 	if err2 != nil {
 		return fiber.Status(http.StatusFailedDependency).JSON(map[string]any{
