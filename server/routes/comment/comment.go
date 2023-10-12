@@ -15,7 +15,7 @@ var auth = config.Auth()
 
 func Comment(fiber *fiber.Ctx) error {
 	ctx := context.Background()
-	docID := fiber.FormValue("id")
+	docID := fiber.FormValue("article_id")
 	uid := fiber.FormValue("uid")
 	comment := fiber.FormValue("comment")
 
