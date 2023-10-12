@@ -11,10 +11,10 @@ import (
 	"google.golang.org/api/option"
 )
 
-var opt = option.WithCredentialsFile("/serviceAccountKey.json")
+var opt = option.WithCredentialsFile("config/serviceAccountKey.json")
 
 func runInit() *firebase.App {
-	app, err := firebase.NewApp(context.Background(), nil, opt)
+	app, err := firebase.NewApp(context.Background(), &firebase.Config{ProjectID: "artics-3755a"}, opt)
 	if err != nil {
 		log.Fatalf("error initializing firebase app: %v\n", err)
 	}
