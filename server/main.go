@@ -1,27 +1,40 @@
 package main
 
 import (
+	articlefeeds "artics-server/routes/articleFeeds"
 	"artics-server/routes/comment"
 	postarticle "artics-server/routes/postArticle"
 	readarticle "artics-server/routes/readArticle"
-	"artics-server/routes/viewComments"
+	readcomment "artics-server/routes/readComment"
+	"fmt"
 	"log"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/joho/godotenv"
 )
+
+func init() {
+	err := godotenv.Load()
+	if err != nil {
+		fmt.Println(err)
+	}
+
+}
 
 func main() {
 	app := fiber.New(fiber.Config{
 		Prefork: true,
 	})
 
+	app.Get("/articleFeed", articlefeeds.Articlefeeds)
+
 	app.Post("/newarticle", postarticle.NewArticle)
 
 	app.Post("/comment", comment.Comment)
 
-	app.Get("/article", readarticle.ReadArticle)
+	app.Post("/article", readarticle.ReadArticle)
 
-	app.Get("/viewcomms", viewComments.ViewComments)
+	app.Post("/viewcomms", readcomment.ReadComment)
 
 	log.Fatal(app.Listen(":5000"))
 }

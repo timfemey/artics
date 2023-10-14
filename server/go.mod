@@ -44,6 +44,7 @@ require (
 	firebase.google.com/go/v4 v4.12.0
 	github.com/andybalholm/brotli v1.0.5 // indirect
 	github.com/google/uuid v1.3.1
+	github.com/joho/godotenv v1.5.1
 	github.com/klauspost/compress v1.16.7 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/mattn/go-isatty v0.0.19 // indirect
