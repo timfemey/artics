@@ -3,7 +3,11 @@ package comment
 import (
 	"artics-server/config"
 	"context"
+	"encoding/json"
+	"io"
 	"net/http"
+	"net/url"
+	"os"
 
 	firestorepkg "cloud.google.com/go/firestore"
 	"github.com/gofiber/fiber/v2"
@@ -26,8 +30,53 @@ func Comment(fiber *fiber.Ctx) error {
 		})
 	}
 
-	_, err := auth.GetUser(ctx, uid)
-	if err != nil {
+	// url := fmt.Sprintf("https://api.moderatecontent.com/text/?exclude=bun,hell&replace=****&key=%[1]s&msg=%[2]s", os.Getenv("API_KEY"), comment)
+	u := &url.URL{
+		Scheme:   "https",
+		Host:     "api.moderatecontent.com",
+		Path:     "/text",
+		Fragment: "none",
+	}
+	q := u.Query()
+	q.Set("exclude", "bun,hell")
+	q.Add("replace", "****")
+	q.Add("key", os.Getenv("API_KEY"))
+	q.Add("msg", comment)
+	u.RawQuery = q.Encode()
+	res, errReq := http.Get(u.String())
+	if errReq != nil {
+		return fiber.Status(http.StatusFailedDependency).JSON(map[string]any{
+			"status":  false,
+			"message": "Failed to Validate Comment",
+		})
+	}
+
+	body, errBody := io.ReadAll(res.Body)
+	if errBody != nil {
+		return fiber.Status(http.StatusFailedDependency).JSON(map[string]any{
+			"status":  false,
+			"message": "Failed to Read Comment Validation",
+		})
+	}
+	defer res.Body.Close()
+	var reqBody map[string]any
+
+	errReqBody := json.Unmarshal(body, &reqBody)
+	if errReqBody != nil {
+
+		return fiber.Status(http.StatusFailedDependency).JSON(map[string]any{
+			"status":  false,
+			"message": "Failed to Check Comment Body for Explicit Language",
+		})
+	}
+	if len(reqBody["bad_words"].([]any)) > 0 {
+		return fiber.Status(http.StatusForbidden).JSON(map[string]any{
+			"status":  false,
+			"message": "Explicit Comment Detected, Not Allowed!",
+		})
+	}
+	_, errUser := auth.GetUser(ctx, uid)
+	if errUser != nil {
 		return fiber.Status(http.StatusForbidden).JSON(map[string]any{
 			"status":  false,
 			"message": "Invalid Account, Create an account before uploading a comment",
