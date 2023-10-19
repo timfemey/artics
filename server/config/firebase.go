@@ -5,9 +5,9 @@ import (
 	"log"
 
 	"cloud.google.com/go/firestore"
+	"cloud.google.com/go/storage"
 	firebase "firebase.google.com/go/v4"
 	"firebase.google.com/go/v4/auth"
-	"firebase.google.com/go/v4/storage"
 	"google.golang.org/api/option"
 )
 
@@ -42,11 +42,16 @@ func Auth() *auth.Client {
 	return auth
 }
 
-func Storage() *storage.Client {
+func Storage() *storage.BucketHandle {
 
 	storage, err := firebaseApp.Storage(context.Background())
 	if err != nil {
 		log.Fatalf("error initializing storage app: %v\n", err)
 	}
-	return storage
+	bucket, err := storage.DefaultBucket()
+	if err != nil {
+		log.Fatalf("error initializing storage bucket: %v\n", err)
+	}
+
+	return bucket
 }
