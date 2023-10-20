@@ -32,7 +32,7 @@ func Articlefeeds(fiber *fiber.Ctx) error {
 				"message": "Failed to Fetch Article Feed, Cant get Users",
 			})
 		}
-		data = append(data, map[string]any{"username": user.DisplayName, "dp": user.PhotoURL, "article_name": doc["article_name"], "article": doc["article"], "timestamp": doc["timestamp"]})
+		data = append(data, map[string]any{"username": user.DisplayName, "dp": user.PhotoURL, "article_name": doc["article_name"], "article": doc["article"], "timestamp": doc["timestamp"], "image": doc["image"]})
 	}
 	return fiber.Status(http.StatusOK).JSON(map[string]any{
 		"status": true,

@@ -34,12 +34,19 @@ func ReadArticle(fiber *fiber.Ctx) error {
 
 	data := doc.Data()
 	user, err := auth.GetUser(ctx, data["uid"].(string))
+	if err != nil {
+		return fiber.Status(http.StatusConflict).JSON(map[string]any{
+			"status":  false,
+			"message": "Failed to get Article Author Details",
+		})
+	}
 
 	return fiber.Status(http.StatusOK).JSON(map[string]any{
 		"article":      data["article"],
 		"username":     user.DisplayName,
 		"dp":           user.PhotoURL,
 		"article_name": data["article_name"],
+		"image":        data["image"],
 		"status":       true,
 	})
 

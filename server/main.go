@@ -6,7 +6,6 @@ import (
 	postarticle "artics-server/routes/postArticle"
 	readarticle "artics-server/routes/readArticle"
 	readcomment "artics-server/routes/readComment"
-	"fmt"
 	"log"
 
 	"github.com/gofiber/fiber/v2"
@@ -16,7 +15,7 @@ import (
 func init() {
 	err := godotenv.Load()
 	if err != nil {
-		fmt.Println(err)
+		log.Fatal(err)
 	}
 
 }
