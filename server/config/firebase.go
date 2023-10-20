@@ -48,7 +48,7 @@ func Storage() *storage.BucketHandle {
 	if err != nil {
 		log.Fatalf("error initializing storage app: %v\n", err)
 	}
-	bucket, err := storage.DefaultBucket()
+	bucket, err := storage.Bucket("artics-3755a.appspot.com")
 	if err != nil {
 		log.Fatalf("error initializing storage bucket: %v\n", err)
 	}
