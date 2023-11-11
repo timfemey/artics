@@ -1,4 +1,5 @@
 import { Component } from "solid-js";
+import Recommendations from "./Recommendations";
 
 const Header: Component<{}> = () => {
   return (
@@ -15,6 +16,7 @@ const Header: Component<{}> = () => {
           </a>
         </div>
       </header>
+      <Recommendations />
     </>
   );
 };

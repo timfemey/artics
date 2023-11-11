@@ -4,13 +4,16 @@ import { render } from "solid-js/web";
 import "./index.css";
 import App from "./App";
 import { CounterProvider } from "./context";
+import { Router } from "@solidjs/router";
 
 const root = document.getElementById("root");
 
 render(
   () => (
     <CounterProvider loggedIn={false}>
-      <App />
+      <Router>
+        <App />
+      </Router>
     </CounterProvider>
   ),
   root!
