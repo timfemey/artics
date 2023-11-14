@@ -88,7 +88,8 @@ func NewArticle(fiber *fiber.Ctx) error {
 			"message": "Could not Read File Copy",
 		})
 	}
-	wc := storage.Object(user.UID + "-" + time.Now().Format("20060102150405")).NewWriter(ctx)
+	object := storage.Object(user.UID + "-" + time.Now().Format("20060102150405"))
+	wc := object.NewWriter(ctx)
 	wc.ChunkSize = 0 // retries are not supported for chunk size 0.
 
 	if _, err = io.Copy(wc, fileBuf); err != nil {
@@ -106,6 +107,21 @@ func NewArticle(fiber *fiber.Ctx) error {
 		})
 	}
 
+	attrs, err := object.Attrs(ctx)
+	if err != nil {
+		return fiber.Status(http.StatusInternalServerError).JSON(map[string]any{
+			"status":  false,
+			"message": " Failed to get Object Upload URL",
+		})
+	}
+	// encodedURL := attrs.MediaLink
+	// decodedURL, err := url.QueryUnescape(encodedURL)
+	// if err != nil {
+	// 	return fiber.Status(http.StatusInternalServerError).JSON(map[string]any{
+	// 		"status":  false,
+	// 		"message": " Error Getting Object URL and Checking Image",
+	// 	})
+	// }
 	u := &url.URL{
 		Scheme:   "https",
 		Host:     "api.moderatecontent.com",
@@ -114,11 +130,13 @@ func NewArticle(fiber *fiber.Ctx) error {
 	}
 	q := u.Query()
 	q.Set("key", os.Getenv("API_KEY"))
-	q.Add("url", wc.MediaLink)
+	q.Add("url", attrs.MediaLink)
 	u.RawQuery = q.Encode()
 
 	res, errReq := http.Get(u.String())
+
 	if errReq != nil {
+
 		return fiber.Status(http.StatusFailedDependency).JSON(map[string]any{
 			"status":  false,
 			"message": "Failed to Validate Comment",
